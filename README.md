@@ -3,22 +3,14 @@ Apache Kafka on Docker
 
 This repository holds a build definition and supporting files for building a
 [Docker] image to run [Kafka] in containers. It is published as an Automated
-Build [on the Docker registry], as `ches/kafka`.
+Build [on the Docker registry], as `disqus/docker-kafka`.
 
 Configuration is parameterized, enabling a Kafka cluster to be run from multiple
 container instances.
 
 ### Fork Note
 
-This image/repo was forked from [relateiq/kafka]. The changes are:
-
-- Change the Kafka binary source to an official Apache artifact. RelateIQ's was
-  on a private S3 bucket, and this opaqueness is not suitable for a
-  publicly-shared image for reasons of trust.
-- Changes described in [this pull request](https://github.com/relateiq/docker-kafka/pull/4).
-
-If these differences resolve in time, I will deprecate this build repo but
-leave existing published images on the registry.
+This image/repo was forked from [ches/kafka] purely to support kafka 0.8.2.1.
 
 Usage Quick Start
 -----------------
@@ -29,22 +21,22 @@ from [the Kafka Quick Start]:
 
 ```
 $ docker run -d --name zookeeper jplock/zookeeper:3.4.6
-$ docker run -d --name kafka --link zookeeper:zookeeper ches/kafka
+$ docker run -d --name kafka --link zookeeper:zookeeper disqus/kafka
 
 $ ZK_IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' zookeeper)
 $ KAFKA_IP=$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' kafka)
 
-$ docker run --rm ches/kafka \
+$ docker run --rm disqus/kafka \
 >   kafka-topics.sh --create --topic test \
 >     --replication-factor 1 --partitions 1 --zookeeper $ZK_IP:2181
 Created topic "test".
 
 # In separate terminals:
-$ docker run --rm --interactive ches/kafka \
+$ docker run --rm --interactive disqus/kafka \
 >   kafka-console-producer.sh --topic test --broker-list $KAFKA_IP:9092
 <type some messages followed by newline>
 
-$ docker run --rm ches/kafka \
+$ docker run --rm disqus/kafka \
 >   kafka-console-consumer.sh --topic test --from-beginning --zookeeper $ZK_IP:2181
 ```
 
@@ -89,7 +81,7 @@ $ docker run -d \
     --volume ./data:/data --volume ./logs:/logs \
     --publish 9092:9092 --publish 7203:7203 \
     --env EXPOSED_HOST=127.0.0.1 --env ZOOKEEPER_IP=127.0.0.1 \
-    ches/kafka
+    disqus/kafka
 ```
 
 Configuration
@@ -142,7 +134,7 @@ with their default values, if any:
 
 [Docker]: http://www.docker.io
 [Kafka]: http://kafka.apache.org
-[on the Docker registry]: https://registry.hub.docker.com/u/ches/kafka/
-[relateiq/kafka]: https://github.com/relateiq/docker-kafka
+[on the Docker registry]: https://registry.hub.docker.com/u/disqus/docker-kafka/
+[relateiq/kafka]: https://github.com/disqus/docker-kafka
 [the Kafka Quick Start]: http://kafka.apache.org/documentation.html#quickstart
 
